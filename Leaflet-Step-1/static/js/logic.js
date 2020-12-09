@@ -13,7 +13,7 @@ function createMap(earthquakes) {
       "Light Map": lightmap
     };
   
-    // Create an overlayMaps object to hold the bikeStations layer
+    // Create an overlayMaps object to hold the Earthquakes layer
     var overlayMaps = {
       "Earth Quakes": earthquakes
     };
@@ -33,17 +33,17 @@ function createMap(earthquakes) {
   
 function createMarkers(data) {
 
-  // Pull the "stations" property off of response.data
+  // Pull the earthquakes 
   var quakes = data.features;
 
-  // Initialize an array to hold bike markers
+  // Initialize an array to hold earthquake markers
   var quakemarkers = [];
 
-  // Loop through the stations array
+  // Loop through the quakes array
   quakes.forEach(quake => {
     // var magrad = Math.pow(quake.properties.mag,3.3)*666;
     var magrad = Math.pow(quake.properties.mag,3.75) * 420;
-    // For each station, create a marker and bind a popup with the station's name
+    // For each quake, create a marker and bind a popup with the station's name
     var quakeMarker = L.circle([quake.geometry.coordinates[1], quake.geometry.coordinates[0]],{radius:magrad,color:getColor(quake.geometry.coordinates[2])})
       .bindPopup("<h3> Magnitude: " + quake.properties.mag + "</h3>" +
       "<h3> Depth: " + quake.geometry.coordinates[2] + "</h3>" +
@@ -63,3 +63,8 @@ function getColor(d){
     d>11 ? "lightgreen":
     "green";
 }
+
+
+
+// Perform an API call to the USGS API to get earthquake information. Call createMarkers when complete
+d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_week.geojson").then(data => createMarkers(data));
